@@ -20,4 +20,3 @@
 //#define NO_ACTION_ONESHOT
 
 #define OLED_DISPLAY_128X64
-#define OLED_TIMEOUT 0
