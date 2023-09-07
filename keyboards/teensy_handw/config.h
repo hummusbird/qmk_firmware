@@ -20,3 +20,4 @@
 //#define NO_ACTION_ONESHOT
 
 #define OLED_DISPLAY_128X64
+#define OLED_FONT_H "keyboards/teensy_handw/font/birb.c"

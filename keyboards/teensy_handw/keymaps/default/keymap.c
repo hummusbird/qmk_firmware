@@ -32,6 +32,16 @@ static void draw_leds(void) {
     oled_write_ln_P(led_state.num_lock ? PSTR(" num lock") : PSTR(""), false);
 }
 
+static void draw_num(void) {
+    static const char PROGMEM zero[] = {
+        0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x20,
+        0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0x20,
+        0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0x20,
+    };
+
+    oled_write_P(zero, false);
+}
+
 static void draw_os(void) {
     switch (detected_host_os()) {
         case OS_UNSURE:
@@ -93,19 +103,20 @@ static void draw_cycle(void) {
     }
 }
 
-static void draw_wpm(void) {
-    oled_write_ln_P(PSTR("wpm: "), false);
+// static void draw_wpm(void) {
+//     oled_write_ln_P(PSTR("wpm: "), false);
 
-    static char wpm_str[4];
-    sprintf(wpm_str, "%03d", get_current_wpm());
-    oled_write(wpm_str, false);
-}
+//     static char wpm_str[4];
+//     sprintf(wpm_str, "%03d", get_current_wpm());
+//     oled_write(wpm_str, false);
+// }
 
 bool oled_task_user(void) {
     oled_set_cursor(0, 0);
     
     draw_leds();
-    draw_wpm();
+    //draw_wpm();
+    draw_num();
     draw_cycle();
 
     return false;
