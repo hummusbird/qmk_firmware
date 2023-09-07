@@ -25,6 +25,13 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return OLED_ROTATION_90;
 }
 
+static void draw_leds(void) {
+    led_t led_state = host_keyboard_led_state();
+    oled_write_ln_P(led_state.caps_lock ? PSTR(" capslock") : PSTR(""), false);
+    oled_write_P(PSTR("+--------+"), false);
+    oled_write_ln_P(led_state.num_lock ? PSTR(" num lock") : PSTR(""), false);
+}
+
 static void draw_os(void) {
     switch (detected_host_os()) {
         case OS_UNSURE:
@@ -86,16 +93,19 @@ static void draw_cycle(void) {
     }
 }
 
-bool oled_task_user(void) {
-    oled_set_cursor(0, 0);
-    led_t led_state = host_keyboard_led_state();
-
-    oled_write_ln_P(led_state.caps_lock ? PSTR(" capslock") : PSTR(""), false);
-    oled_write_P(PSTR("+--------+"), false);
-    oled_write_ln_P(led_state.num_lock ? PSTR(" num lock") : PSTR(""), false);
-
+static void draw_wpm(void) {
     oled_write_ln_P(PSTR("wpm: "), false);
 
+    static char wpm_str[4];
+    sprintf(wpm_str, "%03d", get_current_wpm());
+    oled_write(wpm_str, false);
+}
+
+bool oled_task_user(void) {
+    oled_set_cursor(0, 0);
+    
+    draw_leds();
+    draw_wpm();
     draw_cycle();
 
     return false;
