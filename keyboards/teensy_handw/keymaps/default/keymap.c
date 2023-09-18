@@ -14,12 +14,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {[0] = LAYOUT(KC_ES
 #define CYCLE_DURATION 6000
 uint32_t timer = 0;
 uint8_t current_cycle = 0;
+uint32_t keycount = 0;
 
 #if defined(ENCODER_ENABLE) && defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 
 };
 #endif // defined(ENCODER_ENABLE) && defined(ENCODER_MAP_ENABLE)
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (record->event.pressed) {
+        keycount++;
+    }
+    return true;
+}
 
 #ifdef OLED_ENABLE
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
@@ -104,9 +112,11 @@ static void draw_wpm(void) {
 }
 
 static void draw_keycount(void) {
-    oled_write_ln_P(PSTR(""), false);
-    oled_write_ln_P(PSTR("count:"), false);
-    oled_write_ln("0123456789", false);
+    oled_write_ln_P(PSTR("\ncount:"), false);
+
+    char str[12];
+    sprintf(str, "%ld", keycount);
+    oled_write_ln(str, false);
 }
 
 bool oled_task_user(void) {
