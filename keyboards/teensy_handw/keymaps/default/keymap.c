@@ -36,7 +36,7 @@ static void draw_leds(void) {
 static void draw_os(void) {
     switch (detected_host_os()) {
         case OS_UNSURE:
-            oled_write_ln_P(PSTR(""), false);
+            oled_write_ln_P(PSTR("> no OS!"), false);
             break;
         case OS_LINUX:
             oled_write_ln_P(PSTR("> Linux"), false);
