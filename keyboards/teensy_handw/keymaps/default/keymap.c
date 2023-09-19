@@ -34,6 +34,16 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return OLED_ROTATION_90;
 }
 
+static void write_num(int num) {
+    char guh[9];
+    for (unsigned char i = 0; i < 9; i++) {
+        guh[i] = 0x80 + (i * (num + 1));
+    }
+    guh[9] = 0x00;
+
+    oled_write_ln(guh, false);
+}
+
 static void draw_leds(void) {
     led_t led_state = host_keyboard_led_state();
     oled_write_ln_P(led_state.caps_lock ? PSTR(" capslock") : PSTR(""), false);
@@ -109,6 +119,8 @@ static void draw_wpm(void) {
     char str[5];
     sprintf(str, "%d", get_current_wpm());
     oled_write_ln(str, false);
+
+    write_num(0);
 }
 
 static void draw_keycount(void) {
