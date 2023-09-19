@@ -139,14 +139,14 @@ int nthdig(int n, int k){
 }
 
 static void draw_wpm(void) {
-    oled_write_ln_P(PSTR("wpm: "), false);
+    oled_write_ln_P(PSTR("wpm:\n"), false);
     unsigned int wpm = get_current_wpm();
 
     write_num(nthdig(2, wpm), nthdig(1, wpm), nthdig(0, wpm));
 }
 
 static void draw_keycount(void) {
-    oled_write_ln_P(PSTR("\ncount:"), false);
+    oled_write_ln_P(PSTR("\ncount:\n"), false);
 
     char str[12];
     sprintf(str, "%ld", keycount);
