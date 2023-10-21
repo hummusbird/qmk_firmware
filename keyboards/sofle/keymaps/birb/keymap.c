@@ -5,16 +5,13 @@ enum sofle_layers {
     _QWERTY,
     _LOWER,
     _RAISE,
-    _ADJUST,
+    _ADJUST
 };
 
 enum custom_keycodes {
     KC_QWERTY = SAFE_RANGE,
     KC_PRVWD,
-    KC_NXTWD,
-    KC_LSTRT,
-    KC_LEND,
-    KC_DLINE
+    KC_NXTWD
 };
 
 
@@ -228,51 +225,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             break;
-        case KC_LSTRT:
-            if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                     //CMD-arrow on Mac, but we have CTL and GUI swapped
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_LEFT);
-                } else {
-                    register_code(KC_HOME);
-                }
-            } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_LEFT);
-                } else {
-                    unregister_code(KC_HOME);
-                }
-            }
-            break;
-        case KC_LEND:
-            if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                    //CMD-arrow on Mac, but we have CTL and GUI swapped
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_RIGHT);
-                } else {
-                    register_code(KC_END);
-                }
-            } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_RIGHT);
-                } else {
-                    unregister_code(KC_END);
-                }
-            }
-            break;
-        case KC_DLINE:
-            if (record->event.pressed) {
-                register_mods(mod_config(MOD_LCTL));
-                register_code(KC_BSPC);
-            } else {
-                unregister_mods(mod_config(MOD_LCTL));
-                unregister_code(KC_BSPC);
-            }
-            break;
         case KC_COPY:
             if (record->event.pressed) {
                 register_mods(mod_config(MOD_LCTL));
@@ -318,10 +270,36 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (index == 0) {
-        if (clockwise) {
-            tap_code(KC_VOLU);
+        if (!clockwise) {
+            if (keymap_config.swap_lctl_lgui) {
+                register_mods(mod_config(MOD_LALT));
+                register_code(KC_LEFT);
+            } else {
+                register_mods(mod_config(MOD_LCTL));
+                register_code(KC_LEFT);
+            }
+            if (keymap_config.swap_lctl_lgui) {
+                unregister_mods(mod_config(MOD_LALT));
+                unregister_code(KC_LEFT);
+            } else {
+                unregister_mods(mod_config(MOD_LCTL));
+                unregister_code(KC_LEFT);
+            }
         } else {
-            tap_code(KC_VOLD);
+            if (keymap_config.swap_lctl_lgui) {
+                register_mods(mod_config(MOD_LALT));
+                register_code(KC_RIGHT);
+            } else {
+                register_mods(mod_config(MOD_LCTL));
+                register_code(KC_RIGHT);
+            }
+            if (keymap_config.swap_lctl_lgui) {
+                unregister_mods(mod_config(MOD_LALT));
+                unregister_code(KC_RIGHT);
+            } else {
+                unregister_mods(mod_config(MOD_LCTL));
+                unregister_code(KC_RIGHT);
+            }
         }
     } else if (index == 1) {
         if (clockwise) {
