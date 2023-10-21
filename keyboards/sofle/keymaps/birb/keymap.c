@@ -1,4 +1,8 @@
 #include QMK_KEYBOARD_H
+#include "os_detection.h"
+#include <stdio.h>
+
+uint32_t keycount = 0;
 
 enum sofle_layers {
     /* _M_XYZ = Mac Os, _W_XYZ = Win/Linux */
@@ -97,7 +101,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
   [_ADJUST] = LAYOUT(
   XXXXXXX, XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  QK_BOOT, XXXXXXX,KC_QWERTY, XXXXXXX, CG_TOGG, XXXXXXX,                       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  QK_BOOT, XXXXXXX,KC_QWERTY, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX,  CG_TOGG, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, KC_VOLD, KC_MUTE, KC_VOLU, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_MPRV, KC_MPLY, KC_MNXT, XXXXXXX, XXXXXXX,
                      _______, _______, _______, _______, _______,     _______, _______, _______, _______, _______
@@ -106,70 +110,115 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 #ifdef OLED_ENABLE
 
-static void render_logo(void) {
-    static const char PROGMEM qmk_logo[] = {
-        0x80,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8a,0x8b,0x8c,0x8d,0x8e,0x8f,0x90,0x91,0x92,0x93,0x94,
-        0xa0,0xa1,0xa2,0xa3,0xa4,0xa5,0xa6,0xa7,0xa8,0xa9,0xaa,0xab,0xac,0xad,0xae,0xaf,0xb0,0xb1,0xb2,0xb3,0xb4,
-        0xc0,0xc1,0xc2,0xc3,0xc4,0xc5,0xc6,0xc7,0xc8,0xc9,0xca,0xcb,0xcc,0xcd,0xce,0xcf,0xd0,0xd1,0xd2,0xd3,0xd4,0
-    };
-
-    oled_write_P(qmk_logo, false);
+static void draw_leds(void) {
+    led_t led_state = host_keyboard_led_state();
+    oled_write_P(led_state.caps_lock ? PSTR(" CapsLock") : PSTR("         "), false);
 }
 
-static void print_status_narrow(void) {
-    // Print current mode
-    oled_write_P(PSTR("\n\n"), false);
-    oled_write_ln_P(PSTR("MODE"), false);
-    oled_write_ln_P(PSTR(""), false);
-    if (keymap_config.swap_lctl_lgui) {
-        oled_write_ln_P(PSTR("MAC"), false);
-    } else {
-        oled_write_ln_P(PSTR("WIN"), false);
+static void draw_os(void) {
+    switch (detected_host_os()) {
+    case OS_UNSURE:
+        oled_write_ln_P(PSTR("> Unknown"), false);
+        break;
+    case OS_LINUX:
+        oled_write_ln_P(PSTR("> Linux"), false);
+        break;
+    case OS_WINDOWS:
+        oled_write_ln_P(PSTR("> Windows"), false);
+        break;
+    case OS_MACOS:
+        oled_write_ln_P(PSTR("> OS X"), false);
+        break;
+    case OS_IOS:
+        oled_write_ln_P(PSTR("> iOS"), false);
+        break;
     }
+}
 
-    switch (get_highest_layer(default_layer_state)) {
-        case _QWERTY:
-            oled_write_ln_P(PSTR("Qwrt"), false);
-            break;
-        default:
-            oled_write_P(PSTR("Undef"), false);
-    }
-    oled_write_P(PSTR("\n\n"), false);
-    // Print current layer
-    oled_write_ln_P(PSTR("LAYER"), false);
+static void draw_layer(void) {
     switch (get_highest_layer(layer_state)) {
         case _QWERTY:
-            oled_write_P(PSTR("Base\n"), false);
+            oled_write_P(PSTR("Base  "), false);
             break;
         case _RAISE:
-            oled_write_P(PSTR("Raise"), false);
+            oled_write_P(PSTR("Raise "), false);
             break;
         case _LOWER:
-            oled_write_P(PSTR("Lower"), false);
+            oled_write_P(PSTR("Lower "), false);
             break;
         case _ADJUST:
-            oled_write_P(PSTR("Adj\n"), false);
+            oled_write_P(PSTR("Adjust"), false);
             break;
         default:
-            oled_write_ln_P(PSTR("Undef"), false);
+            oled_write_P(PSTR(""), false);
     }
-    oled_write_P(PSTR("\n\n"), false);
-    led_t led_usb_state = host_keyboard_led_state();
-    oled_write_ln_P(PSTR("CPSLK"), led_usb_state.caps_lock);
+}
+
+static void draw_qr(void) {
+    static const char PROGMEM qr1[] = {
+        0xff, 0x01, 0x01, 0x3f, 0x3f, 0x3f, 0xc1, 0xc1, 0x3f, 0x3f, 0xc1, 0xc1, 0xc7, 0xc7, 0xc1, 0xc1, 
+        0x3f, 0x3f, 0x39, 0x39, 0xff, 0xff, 0xc1, 0xc1, 0xff, 0xff, 0xf9, 0xf9, 0xf9, 0xc7, 0xc7, 0xff
+    };
+    static const char PROGMEM qr2[] = {
+        0xff, 0x00, 0x00, 0x0f, 0x0f, 0x0f, 0x0c, 0x0c, 0xf3, 0xf3, 0xf0, 0xf0, 0xc3, 0xc3, 0xc0, 0xc0, 
+        0x3f, 0x3f, 0xcc, 0xcc, 0x03, 0x03, 0x3f, 0x3f, 0xff, 0xff, 0x03, 0x03, 0x03, 0xcc, 0xcc, 0xff
+    };
+    static const char PROGMEM qr3[] = {
+        0xff, 0x00, 0x00, 0xcf, 0xcf, 0xcf, 0xff, 0xff, 0xf0, 0xf0, 0xff, 0xff, 0xcf, 0xcf, 0x3f, 0x3f, 
+        0xf3, 0xf3, 0x00, 0x00, 0x00, 0x00, 0xcc, 0xcc, 0xf3, 0xf3, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xff
+    };
+    static const char PROGMEM qr4[] = {
+        0xff, 0x80, 0x80, 0x80, 0x80, 0x80, 0x9f, 0x9f, 0x9c, 0x9c, 0x83, 0x83, 0x9c, 0x9c, 0x9c, 0x9c, 
+        0x83, 0x83, 0x80, 0x80, 0x9c, 0x9c, 0x9f, 0x9f, 0x80, 0x80, 0x80, 0x80, 0x80, 0x9c, 0x9c, 0xff
+    };
+
+    oled_set_cursor(16, 0);
+    oled_write_raw_P(qr1, sizeof(qr1));
+
+    oled_set_cursor(16, 1);
+    oled_write_raw_P(qr2, sizeof(qr2));
+    
+    oled_set_cursor(16, 2);
+    oled_write_raw_P(qr3, sizeof(qr3));
+
+    oled_set_cursor(16, 3);
+    oled_write_raw_P(qr4, sizeof(qr4));
+}
+
+static void draw_keycount(void) {
+    oled_write_P(PSTR("count: "), false);
+
+    char str[12];
+    sprintf(str, "%ld", keycount);
+    oled_write_ln(str, false);
+}
+
+static void draw_wpm(void) {
+    oled_write_P(PSTR("\nwpm: "), false);
+    long int wpm = get_current_wpm();
+
+    char str[12];
+    sprintf(str, "%ld", wpm);
+    oled_write_ln(str, false);
 }
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     if (is_keyboard_master()) {
-        return OLED_ROTATION_270;
+        return rotation;
     }
-    return rotation;
+    return OLED_ROTATION_180;
 }
 
 bool oled_task_user(void) {
     if (is_keyboard_master()) {
-        print_status_narrow();
+        draw_os();
+        draw_wpm();
+        draw_keycount();
+
     } else {
-        render_logo();
+        draw_layer();
+        draw_leds();
+        draw_qr();
     }
     return false;
 }
@@ -181,6 +230,8 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (record->event.pressed) { keycount++; }
+
     switch (keycode) {
         case KC_QWERTY:
             if (record->event.pressed) {
