@@ -67,9 +67,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,----------------------------------------.                     ,-----------------------------------------.
  * | ESC  |  F1  |  F2  |  F3  |  F4  |  F5  |                    |  F6  |  F7  |  F8  |  F9  | F10  | F11  |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |      | Ins  | Pscr | Menu |      |      |                    |      | PWrd |  Up  | NWrd |      | F12  |
+ * |      | Ins  | Pscr | Menu |      |      |                    |      |      | PWrd | NWrd |      | F12  |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * | Tab  | LAt  | LCtl |LShift|      | Caps |-------.    ,-------|      | Left | Down | Right|      | HOME |
+ * | Tab  | LAt  | LCtl |LShift|      | Caps |-------.    ,-------|      | Left | Down | Up   | Right| HOME |
  * |------+------+------+------+------+------|  MUTE |    | CAPS  |------+------+------+------+------+------|
  * |LShift| Undo |  Cut | Copy | Paste|      |-------|    |-------|      |      |      |      |      | END  |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
@@ -79,8 +79,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_RAISE] = LAYOUT(
   _______,    KC_F1,    KC_F2,    KC_F3,    KC_F4,   KC_F5,                            KC_F6,    KC_F7,   KC_F8,    KC_F9,   KC_F10,  KC_F11,
-  XXXXXXX,   KC_INS,  KC_PSCR,   KC_APP,  XXXXXXX, XXXXXXX,                          XXXXXXX, KC_PRVWD,   KC_UP, KC_NXTWD,  XXXXXXX,  KC_F12,
-  _______,  KC_LALT,  KC_LCTL,  KC_LSFT,  XXXXXXX, KC_CAPS,                          XXXXXXX,  KC_LEFT, KC_DOWN,  KC_RGHT,  XXXXXXX, KC_HOME,
+  XXXXXXX,   KC_INS,  KC_PSCR,   KC_APP,  XXXXXXX, XXXXXXX,                          XXXXXXX,  XXXXXXX,KC_PRVWD, KC_NXTWD,  XXXXXXX,  KC_F12,
+  _______,  KC_LALT,  KC_LCTL,  KC_LSFT,  XXXXXXX, KC_CAPS,                          XXXXXXX,  KC_LEFT, KC_DOWN,    KC_UP,  KC_RGHT, KC_HOME,
   _______,  KC_UNDO,   KC_CUT,  KC_COPY, KC_PASTE, XXXXXXX,  _______,       _______, XXXXXXX,  XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, KC_END ,
                          _______, _______, _______, _______, _______,       _______, _______, _______, _______, _______
 ),
@@ -111,7 +111,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 static void draw_leds(void) {
     led_t led_state = host_keyboard_led_state();
-    oled_write_P(led_state.caps_lock ? PSTR(" // Caps") : PSTR("        "), false);
+    oled_write_ln_P(led_state.caps_lock ? PSTR(" // Caps") : PSTR(""), false);
 }
 
 static void draw_os(void) {
@@ -196,21 +196,17 @@ static void draw_mode(void) {
     if (keymap_config.swap_lctl_lgui) {
         oled_write_ln_P(PSTR("> OS X keymap"), false);
     } else {
-        oled_write_ln_P(PSTR("      "), false);
+        oled_write_ln_P(PSTR(""), false);
     }
 }
 
 static void draw_wpm(void) {
-    oled_write_P(PSTR("wpm: "), false);
+    oled_write_P(PSTR("\nwpm: "), false);
     long int wpm = get_current_wpm();
 
     char str[12];
     sprintf(str, "%ld", wpm);
     oled_write_ln(str, false);
-}
-
-static void draw_url(void) {
-    oled_write_ln_P(PSTR("\n\n\n> miaowi.ng"), false);
 }
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
@@ -224,13 +220,14 @@ bool oled_task_user(void) {
     if (is_keyboard_master()) {
         draw_os();
         draw_mode();
-        draw_wpm();
+        oled_write_ln_P(PSTR(""), false);
         draw_keycount();
 
     } else {
+        oled_write_ln_P(PSTR("> miaowi.ng"), false);
         draw_layer();
         draw_leds();
-        draw_url();
+        draw_wpm();
         draw_qr();
     }
     return false;
