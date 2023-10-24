@@ -3,9 +3,9 @@
 #include <stdio.h>
 
 uint32_t keycount = 0;
+int encoder_scroll_mode = 0;
 
 enum sofle_layers {
-    /* _M_XYZ = Mac Os, _W_XYZ = Win/Linux */
     _QWERTY,
     _LOWER,
     _RAISE,
@@ -15,7 +15,8 @@ enum sofle_layers {
 enum custom_keycodes {
     KC_QWERTY = SAFE_RANGE,
     KC_PRVWD,
-    KC_NXTWD
+    KC_NXTWD,
+    KC_SCRLMD
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -27,7 +28,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * | `    |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  |  DEL |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | Tab  |   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |  :;  |  '@  |
- * |------+------+------+------+------+------|  MUTE |    | CAPS  |------+------+------+------+------+------|
+ * |------+------+------+------+------+------|  MUTE |    |SCROLL |------+------+------+------+------+------|
  * |LShift|   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,< |   .> |  ?/  |RShift|
  * `-----------------------------------------/       /     \      \-----------------------------------------'
  *            | LCTL | LGUI | LALT |LOWER | /Enter  /       \Space \  |RAISE | RALT | RGUI | RCTL |
@@ -39,7 +40,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_ESC,   KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,  KC_BSPC,
   KC_GRV,   KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,  KC_DEL,
   KC_TAB,   KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                     KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN,  KC_QUOT,
-  KC_LSFT,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B, KC_MUTE,    KC_CAPS,KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,  KC_RSFT,
+  KC_LSFT,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B, KC_MUTE,  KC_SCRLMD,KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,  KC_RSFT,
                  KC_LCTL,KC_LGUI,KC_LALT, MO(_LOWER), KC_ENT,     KC_SPC,   MO(_RAISE), KC_RALT, KC_RGUI, KC_RCTL
 ),
 /* LOWER 
@@ -49,7 +50,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |      |      |      |      |      |      |                    |      |      |      |      |      |  DEL |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | Tab  |      |      |      |      |      |-------.    ,-------|      |      |      |      |      | HOME |
- * |------+------+------+------+------+------|  MUTE |    | CAPS  |------+------+------+------+------+------|
+ * |------+------+------+------+------+------|  MUTE |    |SCROLL |------+------+------+------+------+------|
  * |LShift|  \|  |  _-  |  =+  |      |      |-------|    |-------|      |      |      |      |  \|  | END  |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
  *            | LCTR | LGUI | LALT |LOWER | /Enter  /       \Space \  |RAISE | RALT | RGUI | RCTL |
@@ -193,6 +194,13 @@ static void draw_keycount(void) {
 }
 
 static void draw_mode(void) {
+    if (encoder_scroll_mode == 1) {
+        oled_write_ln_P(PSTR("> Scroll"), false);
+    }
+    else {
+        oled_write_ln_P(PSTR("> Page"), false);
+    }
+
     if (keymap_config.swap_lctl_lgui) {
         oled_write_ln_P(PSTR("> OS X keymap"), false);
     } else {
@@ -220,7 +228,6 @@ bool oled_task_user(void) {
     if (is_keyboard_master()) {
         draw_os();
         draw_mode();
-        oled_write_ln_P(PSTR(""), false);
         draw_keycount();
 
     } else {
@@ -246,6 +253,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_QWERTY:
             if (record->event.pressed) {
                 set_single_persistent_default_layer(_QWERTY);
+            }
+            return false;
+        case KC_SCRLMD: 
+            if(record->event.pressed) {
+                encoder_scroll_mode = 1 - encoder_scroll_mode;
             }
             return false;
         case KC_PRVWD:
@@ -329,17 +341,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef ENCODER_ENABLE
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    if (index == 0) {
-        if (!clockwise) {
-            tap_code(KC_LEFT);
-        } else {
-            tap_code(KC_RIGHT);
+    if (encoder_scroll_mode == 1) { // SCROLL MODE
+        if (index == 0) {
+            if (!clockwise) {
+                tap_code(KC_LEFT);
+            } else {
+                tap_code(KC_RIGHT);
+            }
+        } else if (index == 1) {
+            if (!clockwise) {
+                tap_code(KC_WH_U);
+            } else {
+                tap_code(KC_WH_D);
+            }
         }
-    } else if (index == 1) {
-        if (clockwise) {
-            tap_code(KC_PGDN);
-        } else {
-            tap_code(KC_PGUP);
+    }
+    else { // PAGE MODE
+        if (index == 0) {
+            if (!clockwise) {
+                tap_code(KC_UP);
+            } else {
+                tap_code(KC_DOWN);
+            }
+        } else if (index == 1) {
+            if (!clockwise) {
+                tap_code(KC_PGUP);
+            } else {
+                tap_code(KC_PGDN);
+            }
         }
     }
     return false;
