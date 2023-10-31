@@ -71,7 +71,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |      | Ins  | Pscr | Menu |      |      |                    |      |      | PWrd | NWrd |      | F12  |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * | Tab  | LAt  | LCtl |LShift|      | Caps |-------.    ,-------|      | Left | Down | Up   | Right| HOME |
- * |------+------+------+------+------+------|  MUTE |    | CAPS  |------+------+------+------+------+------|
+ * |------+------+------+------+------+------|  MUTE |    |SCROLL |------+------+------+------+------+------|
  * |LShift| Undo |  Cut | Copy | Paste|      |-------|    |-------|      |      |      |      |      | END  |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
  *            | LCTR | LGUI | LALT |LOWER | /Enter  /       \Space \  |RAISE | RALT | RGUI | RCTL |
@@ -79,20 +79,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *            `----------------------------------'            '------''---------------------------'
  */
 [_RAISE] = LAYOUT(
-  _______,    KC_F1,    KC_F2,    KC_F3,    KC_F4,   KC_F5,                            KC_F6,    KC_F7,   KC_F8,    KC_F9,   KC_F10,  KC_F11,
-  XXXXXXX,   KC_INS,  KC_PSCR,   KC_APP,  XXXXXXX, XXXXXXX,                          XXXXXXX,  XXXXXXX,KC_PRVWD, KC_NXTWD,  XXXXXXX,  KC_F12,
-  _______,  KC_LALT,  KC_LCTL,  KC_LSFT,  XXXXXXX, KC_CAPS,                          XXXXXXX,  KC_LEFT, KC_DOWN,    KC_UP,  KC_RGHT, KC_HOME,
-  _______,  KC_UNDO,   KC_CUT,  KC_COPY, KC_PASTE, XXXXXXX,  _______,       _______, XXXXXXX,  XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, KC_END ,
-                         _______, _______, _______, _______, _______,       _______, _______, _______, _______, _______
+  _______,   KC_F1,   KC_F2,   KC_F3,    KC_F4,   KC_F5,                           KC_F6,   KC_F7,    KC_F8,    KC_F9,  KC_F10,  KC_F11,
+  XXXXXXX,  KC_INS, KC_PSCR,  KC_APP,  XXXXXXX, XXXXXXX,                         XXXXXXX, XXXXXXX, KC_PRVWD, KC_NXTWD, XXXXXXX,  KC_F12,
+  _______, KC_LALT, KC_LCTL, KC_LSFT,  XXXXXXX, KC_CAPS,                         XXXXXXX, KC_LEFT,  KC_DOWN,    KC_UP, KC_RGHT, KC_HOME,
+  _______, KC_UNDO,  KC_CUT, KC_COPY, KC_PASTE, XXXXXXX, _______,       _______, XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX, KC_END ,
+                     _______, _______, _______, _______, _______,       _______, _______, _______,  _______,  _______
 ),
 /* ADJUST
  * ,-----------------------------------------.                    ,-----------------------------------------.
- * | BOOTL|      |      |      |      |      |                    |      |      |      |      |      |      |
+ * | BOOTL|      |      |      |      |      |                    |      |      |      |      |      | BOOTL|
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |      |      |MACWIN|      |      |      |-------.    ,-------|      | VOLDO| MUTE | VOLUP|      |      |
- * |------+------+------+------+------+------|  MUTE |    | CAPS  |------+------+------+------+------+------|
+ * |      |      |      |      |      |      |-------.    ,-------|      | VOLDO| MUTE | VOLUP|      |      |
+ * |------+------+------+------+------+------|  MUTE |    |SCROLL |------+------+------+------+------+------|
  * |      |      |      |      |      |      |-------|    |-------|      | PREV | PLAY | NEXT |      |      |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
  *            | LCTL | LGUI | LALT |LOWER | /Enter  /       \Space \  |RAISE | RALT | RGUI | RCTL |
@@ -100,9 +100,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *            `----------------------------------'            '------''---------------------------'
  */
   [_ADJUST] = LAYOUT(
-  QK_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  QK_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, QK_BOOT,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX, XXXXXXX, CG_TOGG, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, KC_VOLD, KC_MUTE, KC_VOLU, XXXXXXX, XXXXXXX,
+  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, KC_VOLD, KC_MUTE, KC_VOLU, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,     _______, XXXXXXX, KC_MPRV, KC_MPLY, KC_MNXT, XXXXXXX, XXXXXXX,
                     _______, _______, _______, _______, _______,     _______, _______, _______, _______, _______
   )
@@ -112,7 +112,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 static void draw_leds(void) {
     led_t led_state = host_keyboard_led_state();
-    oled_write_ln_P(led_state.caps_lock ? PSTR(" // Caps") : PSTR(""), false);
+
+    if (led_state.caps_lock == true) {
+        static const char PROGMEM CAPS_1[] = {
+            78, 81,193, 65, 65,145, 14,  0
+        };
+
+        static const char PROGMEM CAPS_2[] = {
+            20, 20, 23,244, 20, 18,241,  0
+        };
+
+        static const char PROGMEM CAPS_3[] = {
+            56, 68, 64, 56,  5, 69, 56,  0
+        };
+        
+        oled_set_cursor(18, 1);
+        oled_write_raw_P(CAPS_1, sizeof(CAPS_1));
+
+        oled_set_cursor(18, 2);
+        oled_write_raw_P(CAPS_2, sizeof(CAPS_2));
+
+        oled_set_cursor(18, 3);
+        oled_write_raw_P(CAPS_3, sizeof(CAPS_3));
+    }
 }
 
 static void draw_os(void) {
@@ -138,16 +160,16 @@ static void draw_os(void) {
 static void draw_layer(void) {
     switch (get_highest_layer(layer_state)) {
         case _QWERTY:
-            oled_write_P(PSTR("> Base "), false);
+            oled_write_P(PSTR("$ Base "), false);
             break;
         case _RAISE:
-            oled_write_P(PSTR("> Raise"), false);
+            oled_write_P(PSTR("$ Raise"), false);
             break;
         case _LOWER:
-            oled_write_P(PSTR("> Lower"), false);
+            oled_write_P(PSTR("$ Lower"), false);
             break;
         case _ADJUST:
-            oled_write_P(PSTR("> Mode "), false);
+            oled_write_P(PSTR("$ Mode "), false);
             break;
         default:
             oled_write_P(PSTR(""), false);
@@ -156,20 +178,20 @@ static void draw_layer(void) {
 
 static void draw_qr(void) {
     static const char PROGMEM qr1[] = {
-        0xff, 0x01, 0x01, 0x3f, 0x3f, 0x3f, 0xc1, 0xc1, 0x3f, 0x3f, 0xc1, 0xc1, 0xc7, 0xc7, 0xc1, 0xc1, 
-        0x3f, 0x3f, 0x39, 0x39, 0xff, 0xff, 0xc1, 0xc1, 0xff, 0xff, 0xf9, 0xf9, 0xf9, 0xc7, 0xc7, 0xff
+        0xff, 0xff, 0x30, 0x30, 0xcf, 0xcf, 0x30, 0x30, 0xcf, 0xcf, 0x0c, 0x0c, 0xcf, 0xcf, 0xf0, 0xf0, 
+        0x33, 0x33, 0x0c, 0x0c, 0x0f, 0x0f, 0xc0, 0xc0, 0xc3, 0xc3, 0xc0, 0xc0, 0x33, 0x33, 0xcc, 0xcc
     };
     static const char PROGMEM qr2[] = {
-        0xff, 0x00, 0x00, 0x0f, 0x0f, 0x0f, 0x0c, 0x0c, 0xf3, 0xf3, 0xf0, 0xf0, 0xc3, 0xc3, 0xc0, 0xc0, 
-        0x3f, 0x3f, 0xcc, 0xcc, 0x03, 0x03, 0x3f, 0x3f, 0xff, 0xff, 0x03, 0x03, 0x03, 0xcc, 0xcc, 0xff
+        0xff, 0xff, 0x3c, 0x3c, 0x3c, 0x3c, 0x03, 0x03, 0xc3, 0xc3, 0x3f, 0x3f, 0xff, 0xff, 0xf0, 0xf0, 
+        0x3f, 0x3f, 0x3c, 0x3c, 0xfc, 0xfc, 0xc3, 0xc3, 0xff, 0xff, 0x30, 0x30, 0xcf, 0xcf, 0xcc, 0xcc
     };
     static const char PROGMEM qr3[] = {
-        0xff, 0x00, 0x00, 0xcf, 0xcf, 0xcf, 0xff, 0xff, 0xf0, 0xf0, 0xff, 0xff, 0xcf, 0xcf, 0x3f, 0x3f, 
-        0xf3, 0xf3, 0x00, 0x00, 0x00, 0x00, 0xcc, 0xcc, 0xf3, 0xf3, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xff
+        0xff, 0xff, 0xcc, 0xcc, 0xcc, 0xcc, 0x3f, 0x3f, 0x00, 0x00, 0xfc, 0xfc, 0x3f, 0x3f, 0xfc, 0xfc, 
+        0x3f, 0x3f, 0xcf, 0xcf, 0xfc, 0xfc, 0xf3, 0xf3, 0xff, 0xff, 0xc3, 0xc3, 0xfc, 0xfc, 0xcc, 0xcc
     };
     static const char PROGMEM qr4[] = {
-        0xff, 0x80, 0x80, 0x80, 0x80, 0x80, 0x9f, 0x9f, 0x9c, 0x9c, 0x83, 0x83, 0x9c, 0x9c, 0x9c, 0x9c, 
-        0x83, 0x83, 0x80, 0x80, 0x9c, 0x9c, 0x9f, 0x9f, 0x80, 0x80, 0x80, 0x80, 0x80, 0x9c, 0x9c, 0xff
+        0xff, 0xff, 0xc3, 0xc3, 0xff, 0xff, 0xcf, 0xcf, 0xcc, 0xcc, 0xf3, 0xf3, 0xfc, 0xfc, 0xc0, 0xc0, 
+        0xcf, 0xcf, 0xfc, 0xfc, 0xc3, 0xc3, 0xc0, 0xc0, 0xf0, 0xf0, 0xcf, 0xcf, 0xf3, 0xf3, 0xcc, 0xcc
     };
 
     oled_set_cursor(16, 0);
@@ -195,21 +217,17 @@ static void draw_keycount(void) {
 
 static void draw_mode(void) {
     if (encoder_scroll_mode == 1) {
-        oled_write_ln_P(PSTR("> Scroll"), false);
+        oled_write_ln_P(PSTR("$ Scroll"), false);
     }
     else {
-        oled_write_ln_P(PSTR("> Page"), false);
+        oled_write_ln_P(PSTR("$ Page"), false);
     }
 
-    if (keymap_config.swap_lctl_lgui) {
-        oled_write_ln_P(PSTR("> OS X keymap"), false);
-    } else {
-        oled_write_ln_P(PSTR(""), false);
-    }
+    oled_write_ln_P(PSTR(""), false);
 }
 
 static void draw_wpm(void) {
-    oled_write_P(PSTR("\nwpm: "), false);
+    oled_write_P(PSTR("\n\nwpm: "), false);
     long int wpm = get_current_wpm();
 
     char str[12];
@@ -228,12 +246,12 @@ bool oled_task_user(void) {
     if (is_keyboard_master()) {
         draw_os();
         draw_mode();
-        draw_keycount();
+        draw_keycount(); 
+        draw_leds();
 
     } else {
         oled_write_ln_P(PSTR("> miaowi.ng"), false);
         draw_layer();
-        draw_leds();
         draw_wpm();
         draw_qr();
     }
@@ -262,40 +280,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case KC_PRVWD:
             if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                    register_mods(mod_config(MOD_LALT));
-                    register_code(KC_LEFT);
-                } else {
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_LEFT);
-                }
+                register_mods(mod_config(MOD_LCTL));
+                register_code(KC_LEFT);
             } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LALT));
-                    unregister_code(KC_LEFT);
-                } else {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_LEFT);
-                }
+                unregister_mods(mod_config(MOD_LCTL));
+                unregister_code(KC_LEFT);
             }
             return false;
         case KC_NXTWD:
              if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                    register_mods(mod_config(MOD_LALT));
-                    register_code(KC_RIGHT);
-                } else {
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_RIGHT);
-                }
+                register_mods(mod_config(MOD_LCTL));
+                register_code(KC_RIGHT);
             } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LALT));
-                    unregister_code(KC_RIGHT);
-                } else {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_RIGHT);
-                }
+                unregister_mods(mod_config(MOD_LCTL));
+                unregister_code(KC_RIGHT);
             }
             return false;
         case KC_COPY:
