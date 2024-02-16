@@ -43,7 +43,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_LSFT,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B, KC_MUTE,  KC_SCRLMD,KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,  KC_RSFT,
                  KC_LCTL,KC_LGUI,KC_LALT, MO(_LOWER), KC_ENT,     KC_SPC,   MO(_RAISE), KC_RALT, KC_RGUI, KC_RCTL
 ),
-/* LOWER 
+/* LOWER
  * ,-----------------------------------------.                    ,-----------------------------------------.
  * | ESC  |      |      |  #~  |      |      |                    |      |      |      |  [{  |  ]}  |  BS  |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
@@ -70,7 +70,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      | Ins  | Pscr | Menu |      |      |                    |      |      | PWrd | NWrd |      | F12  |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * | Tab  | LAt  | LCtl |LShift|      | Caps |-------.    ,-------|      | Left | Down | Up   | Right| HOME |
+ * | Tab  |      |      |      |      | Caps |-------.    ,-------|      | Left | Down | Up   | Right| HOME |
  * |------+------+------+------+------+------|  MUTE |    |SCROLL |------+------+------+------+------+------|
  * |LShift| Undo |  Cut | Copy | Paste|      |-------|    |-------|      |      |      |      |      | END  |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
@@ -81,11 +81,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_RAISE] = LAYOUT(
   _______,   KC_F1,   KC_F2,   KC_F3,    KC_F4,   KC_F5,                           KC_F6,   KC_F7,    KC_F8,    KC_F9,  KC_F10,  KC_F11,
   XXXXXXX,  KC_INS, KC_PSCR,  KC_APP,  XXXXXXX, XXXXXXX,                         XXXXXXX, XXXXXXX, KC_PRVWD, KC_NXTWD, XXXXXXX,  KC_F12,
-  _______, KC_LALT, KC_LCTL, KC_LSFT,  XXXXXXX, KC_CAPS,                         XXXXXXX, KC_LEFT,  KC_DOWN,    KC_UP, KC_RGHT, KC_HOME,
+  _______, XXXXXXX, XXXXXXX, XXXXXXX,  XXXXXXX, KC_CAPS,                         XXXXXXX, KC_LEFT,  KC_DOWN,    KC_UP, KC_RGHT, KC_HOME,
   _______, KC_UNDO,  KC_CUT, KC_COPY, KC_PASTE, XXXXXXX, _______,       _______, XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX, KC_END ,
                      _______, _______, _______, _______, _______,       _______, _______, _______,  _______,  _______
 ),
-/* ADJUST
+/* MODE
  * ,-----------------------------------------.                    ,-----------------------------------------.
  * | BOOTL|      |      |      |      |      |                    |      |      |      |      |      | BOOTL|
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
@@ -93,7 +93,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      |      |      |      |      |-------.    ,-------|      | VOLDO| MUTE | VOLUP|      |      |
  * |------+------+------+------+------+------|  MUTE |    |SCROLL |------+------+------+------+------+------|
- * |      |      |      |      |      |      |-------|    |-------|      | PREV | PLAY | NEXT |      |      |
+ * |REBOOT|      |      |      |      |      |-------|    |-------|      | PREV | PLAY | NEXT |      |REBOOT|
  * `-----------------------------------------/       /     \      \-----------------------------------------'
  *            | LCTL | LGUI | LALT |LOWER | /Enter  /       \Space \  |RAISE | RALT | RGUI | RCTL |
  *            |      |      |      |      |/       /         \      \ |      |      |      |      |
@@ -103,7 +103,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   QK_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, QK_BOOT,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, KC_VOLD, KC_MUTE, KC_VOLU, XXXXXXX, XXXXXXX,
-  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,     _______, XXXXXXX, KC_MPRV, KC_MPLY, KC_MNXT, XXXXXXX, XXXXXXX,
+   QK_RBT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,     _______, XXXXXXX, KC_MPRV, KC_MPLY, KC_MNXT, XXXXXXX, QK_RBT ,
                     _______, _______, _______, _______, _______,     _______, _______, _______, _______, _______
   )
 };
@@ -125,7 +125,7 @@ static void draw_leds(void) {
         static const char PROGMEM CAPS_3[] = {
             56, 68, 64, 56,  5, 69, 56,  0
         };
-        
+
         oled_set_cursor(18, 1);
         oled_write_raw_P(CAPS_1, sizeof(CAPS_1));
 
@@ -178,19 +178,19 @@ static void draw_layer(void) {
 
 static void draw_qr(void) {
     static const char PROGMEM qr1[] = {
-        0xff, 0xff, 0x30, 0x30, 0xcf, 0xcf, 0x30, 0x30, 0xcf, 0xcf, 0x0c, 0x0c, 0xcf, 0xcf, 0xf0, 0xf0, 
+        0xff, 0xff, 0x30, 0x30, 0xcf, 0xcf, 0x30, 0x30, 0xcf, 0xcf, 0x0c, 0x0c, 0xcf, 0xcf, 0xf0, 0xf0,
         0x33, 0x33, 0x0c, 0x0c, 0x0f, 0x0f, 0xc0, 0xc0, 0xc3, 0xc3, 0xc0, 0xc0, 0x33, 0x33, 0xcc, 0xcc
     };
     static const char PROGMEM qr2[] = {
-        0xff, 0xff, 0x3c, 0x3c, 0x3c, 0x3c, 0x03, 0x03, 0xc3, 0xc3, 0x3f, 0x3f, 0xff, 0xff, 0xf0, 0xf0, 
+        0xff, 0xff, 0x3c, 0x3c, 0x3c, 0x3c, 0x03, 0x03, 0xc3, 0xc3, 0x3f, 0x3f, 0xff, 0xff, 0xf0, 0xf0,
         0x3f, 0x3f, 0x3c, 0x3c, 0xfc, 0xfc, 0xc3, 0xc3, 0xff, 0xff, 0x30, 0x30, 0xcf, 0xcf, 0xcc, 0xcc
     };
     static const char PROGMEM qr3[] = {
-        0xff, 0xff, 0xcc, 0xcc, 0xcc, 0xcc, 0x3f, 0x3f, 0x00, 0x00, 0xfc, 0xfc, 0x3f, 0x3f, 0xfc, 0xfc, 
+        0xff, 0xff, 0xcc, 0xcc, 0xcc, 0xcc, 0x3f, 0x3f, 0x00, 0x00, 0xfc, 0xfc, 0x3f, 0x3f, 0xfc, 0xfc,
         0x3f, 0x3f, 0xcf, 0xcf, 0xfc, 0xfc, 0xf3, 0xf3, 0xff, 0xff, 0xc3, 0xc3, 0xfc, 0xfc, 0xcc, 0xcc
     };
     static const char PROGMEM qr4[] = {
-        0xff, 0xff, 0xc3, 0xc3, 0xff, 0xff, 0xcf, 0xcf, 0xcc, 0xcc, 0xf3, 0xf3, 0xfc, 0xfc, 0xc0, 0xc0, 
+        0xff, 0xff, 0xc3, 0xc3, 0xff, 0xff, 0xcf, 0xcf, 0xcc, 0xcc, 0xf3, 0xf3, 0xfc, 0xfc, 0xc0, 0xc0,
         0xcf, 0xcf, 0xfc, 0xfc, 0xc3, 0xc3, 0xc0, 0xc0, 0xf0, 0xf0, 0xcf, 0xcf, 0xf3, 0xf3, 0xcc, 0xcc
     };
 
@@ -199,7 +199,7 @@ static void draw_qr(void) {
 
     oled_set_cursor(16, 1);
     oled_write_raw_P(qr2, sizeof(qr2));
-    
+
     oled_set_cursor(16, 2);
     oled_write_raw_P(qr3, sizeof(qr3));
 
@@ -246,7 +246,7 @@ bool oled_task_user(void) {
     if (is_keyboard_master()) {
         draw_os();
         draw_mode();
-        draw_keycount(); 
+        draw_keycount();
         draw_leds();
 
     } else {
@@ -273,7 +273,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 set_single_persistent_default_layer(_QWERTY);
             }
             return false;
-        case KC_SCRLMD: 
+        case KC_SCRLMD:
             if(record->event.pressed) {
                 encoder_scroll_mode = 1 - encoder_scroll_mode;
             }
